@@ -1,0 +1,19 @@
+services:
+  tubegrab:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-local}/tubegrab:${TAG:-latest}
+    container_name: tubegrab
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - YT_DLP_BIN=/usr/local/bin/yt-dlp
+      - FFMPEG_BIN=/usr/bin/ffmpeg
+    volumes:
+      - ytdl_tmp:/tmp/ytdl
+
+volumes:
+  ytdl_tmp:
