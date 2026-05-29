@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TubeGrab
 
-## Getting Started
+YouTube downloader with real-time progress, built with Next.js 16, shadcn/ui, tRPC, and yt-dlp.
 
-First, run the development server:
+## Local Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# prerequisites: yt-dlp and ffmpeg
+brew install yt-dlp ffmpeg
+
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy (Zimablade via Tailscale + Docker)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### GitHub Secrets required
 
-## Learn More
+| Secret | Description |
+|--------|-------------|
+| `GHCR_TOKEN` | GitHub PAT with `read:packages` (for server to pull image) |
+| `TS_OAUTH_CLIENT_ID` | Tailscale OAuth client ID |
+| `TS_OAUTH_CLIENT_SECRET` | Tailscale OAuth client secret |
+| `DEPLOY_HOST` | Tailscale hostname or IP of the server |
+| `DEPLOY_USER` | SSH username on the server |
+| `DEPLOY_SSH_KEY` | Private SSH key (matching `authorized_keys` on server) |
 
-To learn more about Next.js, take a look at the following resources:
+Create a GitHub **environment** named `production` (Settings → Environments).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Tailscale OAuth
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+In [Tailscale Admin → OAuth clients](https://login.tailscale.com/admin/settings/oauth), create a client with `devices:read` scope and add `tag:ci` to ACL `tagOwners`.
 
-## Deploy on Vercel
+### Server setup (one-time)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+# install Docker
+curl -fsSL https://get.docker.com | sh
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# create app dir
+mkdir -p /opt/tubegrab && cd /opt/tubegrab
+
+# create docker-compose.yml referencing the ghcr image
+# (see docker-compose.yml in repo, set GITHUB_REPOSITORY_OWNER and TAG vars)
+echo 'GITHUB_REPOSITORY_OWNER=your-github-user' > .env
+echo 'TAG=main' >> .env
+
+# login to ghcr and pull
+echo YOUR_GHCR_TOKEN | docker login ghcr.io -u your-github-user --password-stdin
+docker compose pull && docker compose up -d
+```
+
+### Release workflow
+
+```bash
+# develop on dev, then:
+git checkout main && git merge dev
+git push origin main          # triggers build + deploy
+
+# tagged release
+git tag -a v1.0.0 -m "v1.0.0"
+git push origin v1.0.0
+```
+
+## Scripts
+
+```bash
+pnpm dev          # start dev server
+pnpm build        # production build
+pnpm check        # Biome lint + format check
+pnpm check:fix    # auto-fix
+```
