@@ -1,10 +1,10 @@
 'use client'
 import Image from 'next/image'
+import { ArcProgress } from '@/components/downloader/arc-progress'
+import { ProgressInfo } from '@/components/downloader/progress-info'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
-import type { ProgressState } from '@/schemas/downloader'
-import { ArcProgress } from './arc-progress'
-import { ProgressInfo } from './progress-info'
+import type { ProgressState } from '@/lib/schemas/downloader'
 
 type ProgressDialogProps = {
   open: boolean

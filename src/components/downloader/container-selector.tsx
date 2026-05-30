@@ -1,7 +1,7 @@
 'use client'
 import { VIDEO_FORMATS } from '@/lib/download-options'
+import type { VideoFormat } from '@/lib/schemas/downloader'
 import { cn } from '@/lib/utils'
-import type { VideoFormat } from '@/schemas/downloader'
 
 type ContainerSelectorProps = {
   value: VideoFormat

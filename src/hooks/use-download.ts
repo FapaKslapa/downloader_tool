@@ -2,7 +2,7 @@
 import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 import { useRef, useState } from 'react'
-import type { DownloadOptions, ProgressState } from '@/schemas/downloader'
+import type { DownloadOptions, ProgressState } from '@/lib/schemas/downloader'
 
 const initState = (): ProgressState => ({
   phase: 'starting',

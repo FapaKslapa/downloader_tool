@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { DM_Sans, Space_Grotesk } from 'next/font/google'
+import { Providers } from '@/app/providers'
 import { Toaster } from '@/components/ui/sonner'
-import { Providers } from './providers'
 import './globals.css'
 
 const displayFont = Space_Grotesk({

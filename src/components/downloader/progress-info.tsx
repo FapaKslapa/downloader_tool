@@ -1,5 +1,5 @@
 import { Loader2 } from 'lucide-react'
-import type { DownloadPhase, ProgressState } from '@/schemas/downloader'
+import type { DownloadPhase, ProgressState } from '@/lib/schemas/downloader'
 
 const PHASE_LABEL: Record<DownloadPhase, string> = {
   starting: 'Connessione…',

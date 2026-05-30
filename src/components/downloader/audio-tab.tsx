@@ -1,7 +1,7 @@
 'use client'
-import type { AudioFormat, AudioQuality, DownloadOptions } from '@/schemas/downloader'
-import { AudioFormatGrid } from './audio-format-grid'
-import { AudioQualitySelector } from './audio-quality-selector'
+import { AudioFormatGrid } from '@/components/downloader/audio-format-grid'
+import { AudioQualitySelector } from '@/components/downloader/audio-quality-selector'
+import type { AudioFormat, AudioQuality, DownloadOptions } from '@/lib/schemas/downloader'
 
 type AudioTabProps = {
   options: DownloadOptions

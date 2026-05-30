@@ -1,12 +1,12 @@
 'use client'
 import { ChevronDown, Music, Video } from 'lucide-react'
 import { useState } from 'react'
+import { AudioTab } from '@/components/downloader/audio-tab'
+import { ExtraToggles } from '@/components/downloader/extra-toggles'
+import { VideoTab } from '@/components/downloader/video-tab'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DEFAULT_OPTIONS } from '@/lib/download-options'
-import type { DownloadOptions } from '@/schemas/downloader'
-import { AudioTab } from './audio-tab'
-import { ExtraToggles } from './extra-toggles'
-import { VideoTab } from './video-tab'
+import type { DownloadOptions } from '@/lib/schemas/downloader'
 
 type FormatPanelProps = {
   options: DownloadOptions

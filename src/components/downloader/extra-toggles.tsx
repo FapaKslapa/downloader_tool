@@ -1,6 +1,6 @@
 'use client'
 import { Switch } from '@/components/ui/switch'
-import type { DownloadOptions } from '@/schemas/downloader'
+import type { DownloadOptions } from '@/lib/schemas/downloader'
 
 type ExtraTogglesProps = {
   options: DownloadOptions

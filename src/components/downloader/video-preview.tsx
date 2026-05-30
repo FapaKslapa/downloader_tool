@@ -1,6 +1,6 @@
-import type { VideoInfo } from '@/schemas/downloader'
-import { VideoMeta } from './video-meta'
-import { VideoThumbnail } from './video-thumbnail'
+import { VideoMeta } from '@/components/downloader/video-meta'
+import { VideoThumbnail } from '@/components/downloader/video-thumbnail'
+import type { VideoInfo } from '@/lib/schemas/downloader'
 
 type VideoPreviewProps = {
   info: VideoInfo

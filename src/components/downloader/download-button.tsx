@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { buildDownloadLabel } from '@/lib/download-options'
-import type { DownloadOptions } from '@/schemas/downloader'
+import type { DownloadOptions } from '@/lib/schemas/downloader'
 
 type DownloadButtonProps = {
   options: DownloadOptions

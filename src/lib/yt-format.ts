@@ -1,4 +1,4 @@
-import type { DownloadOptions } from '@/schemas/downloader'
+import type { DownloadOptions } from '@/lib/schemas/downloader'
 
 export function buildFormatString(opts: DownloadOptions): string {
   if (opts.type === 'audio') return 'bestaudio/best'

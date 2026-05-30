@@ -2,16 +2,16 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { RotateCcw } from 'lucide-react'
 import { useState } from 'react'
+import { DownloadButton } from '@/components/downloader/download-button'
+import { FormatPanel } from '@/components/downloader/format-panel'
+import { ProgressDialog } from '@/components/downloader/progress-dialog'
+import { UrlInput } from '@/components/downloader/url-input'
+import { VideoPreview } from '@/components/downloader/video-preview'
 import { Button } from '@/components/ui/button'
 import { useDownload } from '@/hooks/use-download'
 import { useVideoInfo } from '@/hooks/use-video-info'
 import { DEFAULT_OPTIONS } from '@/lib/download-options'
-import type { DownloadOptions } from '@/schemas/downloader'
-import { DownloadButton } from './downloader/download-button'
-import { FormatPanel } from './downloader/format-panel'
-import { ProgressDialog } from './downloader/progress-dialog'
-import { UrlInput } from './downloader/url-input'
-import { VideoPreview } from './downloader/video-preview'
+import type { DownloadOptions } from '@/lib/schemas/downloader'
 
 export function Downloader() {
   const { videoInfo, isLoading, error, search, reset } = useVideoInfo()

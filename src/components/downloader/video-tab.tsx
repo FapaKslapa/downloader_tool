@@ -1,7 +1,7 @@
 'use client'
-import type { DownloadOptions, VideoFormat, VideoQuality } from '@/schemas/downloader'
-import { ContainerSelector } from './container-selector'
-import { QualitySelector } from './quality-selector'
+import { ContainerSelector } from '@/components/downloader/container-selector'
+import { QualitySelector } from '@/components/downloader/quality-selector'
+import type { DownloadOptions, VideoFormat, VideoQuality } from '@/lib/schemas/downloader'
 
 type VideoTabProps = {
   options: DownloadOptions
