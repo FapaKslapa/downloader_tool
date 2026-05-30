@@ -3,7 +3,7 @@ import type { AudioFormat, AudioQuality, DownloadOptions } from '@/schemas/downl
 import { AudioFormatGrid } from './audio-format-grid'
 import { AudioQualitySelector } from './audio-quality-selector'
 
-interface AudioTabProps {
+type AudioTabProps = {
   options: DownloadOptions
   onChange: <K extends keyof DownloadOptions>(key: K, val: DownloadOptions[K]) => void
 }

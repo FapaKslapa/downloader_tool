@@ -3,7 +3,7 @@ import { VIDEO_QUALITIES } from '@/lib/download-options'
 import type { VideoQuality } from '@/schemas/downloader'
 import { QualityChip } from './quality-chip'
 
-interface QualitySelectorProps {
+type QualitySelectorProps = {
   value: VideoQuality
   onChange: (v: VideoQuality) => void
   availableHeights?: number[]

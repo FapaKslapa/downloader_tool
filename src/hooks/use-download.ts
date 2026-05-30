@@ -14,7 +14,7 @@ const initState = (): ProgressState => ({
   error: '',
 })
 
-interface ProgressPayload {
+type ProgressPayload = {
   type: string
   percent?: number
   size?: string

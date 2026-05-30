@@ -8,7 +8,7 @@ import { AudioTab } from './audio-tab'
 import { ExtraToggles } from './extra-toggles'
 import { VideoTab } from './video-tab'
 
-interface FormatPanelProps {
+type FormatPanelProps = {
   options: DownloadOptions
   onChange: (opts: DownloadOptions) => void
   availableHeights?: number[]

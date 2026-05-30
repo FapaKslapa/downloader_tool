@@ -3,7 +3,7 @@ import { VIDEO_FORMATS } from '@/lib/download-options'
 import { cn } from '@/lib/utils'
 import type { VideoFormat } from '@/schemas/downloader'
 
-interface ContainerSelectorProps {
+type ContainerSelectorProps = {
   value: VideoFormat
   onChange: (v: VideoFormat) => void
 }

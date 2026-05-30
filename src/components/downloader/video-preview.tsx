@@ -2,7 +2,7 @@ import type { VideoInfo } from '@/schemas/downloader'
 import { VideoMeta } from './video-meta'
 import { VideoThumbnail } from './video-thumbnail'
 
-interface VideoPreviewProps {
+type VideoPreviewProps = {
   info: VideoInfo
 }
 

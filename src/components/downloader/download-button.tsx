@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { buildDownloadLabel } from '@/lib/download-options'
 import type { DownloadOptions } from '@/schemas/downloader'
 
-interface DownloadButtonProps {
+type DownloadButtonProps = {
   options: DownloadOptions
   onClick: () => void
 }

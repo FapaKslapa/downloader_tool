@@ -3,7 +3,7 @@ import type { DownloadOptions, VideoFormat, VideoQuality } from '@/schemas/downl
 import { ContainerSelector } from './container-selector'
 import { QualitySelector } from './quality-selector'
 
-interface VideoTabProps {
+type VideoTabProps = {
   options: DownloadOptions
   onChange: <K extends keyof DownloadOptions>(key: K, val: DownloadOptions[K]) => void
   availableHeights: number[]

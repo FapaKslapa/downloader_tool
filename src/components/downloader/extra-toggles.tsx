@@ -2,7 +2,7 @@
 import { Switch } from '@/components/ui/switch'
 import type { DownloadOptions } from '@/schemas/downloader'
 
-interface ExtraTogglesProps {
+type ExtraTogglesProps = {
   options: DownloadOptions
   onChange: <K extends keyof DownloadOptions>(key: K, val: DownloadOptions[K]) => void
   hasSubtitles: boolean

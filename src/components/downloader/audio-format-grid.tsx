@@ -3,7 +3,7 @@ import { AUDIO_FORMATS } from '@/lib/download-options'
 import { cn } from '@/lib/utils'
 import type { AudioFormat } from '@/schemas/downloader'
 
-interface AudioFormatGridProps {
+type AudioFormatGridProps = {
   value: AudioFormat
   onChange: (v: AudioFormat) => void
 }

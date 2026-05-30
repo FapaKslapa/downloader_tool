@@ -1,7 +1,7 @@
 'use client'
 import { cn } from '@/lib/utils'
 
-interface QualityChipProps {
+type QualityChipProps = {
   label: string
   active: boolean
   onClick: () => void

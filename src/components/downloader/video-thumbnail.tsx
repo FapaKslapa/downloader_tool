@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { formatDuration } from '@/lib/time'
 
-interface VideoThumbnailProps {
+type VideoThumbnailProps = {
   src: string
   alt: string
   duration: number

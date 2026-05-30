@@ -6,7 +6,7 @@ import type { ProgressState } from '@/schemas/downloader'
 import { ArcProgress } from './arc-progress'
 import { ProgressInfo } from './progress-info'
 
-interface ProgressDialogProps {
+type ProgressDialogProps = {
   open: boolean
   state: ProgressState
   thumbnail?: string

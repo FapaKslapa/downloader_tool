@@ -3,7 +3,7 @@ import { AUDIO_QUALITIES } from '@/lib/download-options'
 import type { AudioQuality } from '@/schemas/downloader'
 import { QualityChip } from './quality-chip'
 
-interface AudioQualitySelectorProps {
+type AudioQualitySelectorProps = {
   value: AudioQuality
   onChange: (v: AudioQuality) => void
 }

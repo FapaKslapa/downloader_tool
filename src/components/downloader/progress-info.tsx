@@ -18,7 +18,7 @@ const PHASE_COLOR: Record<DownloadPhase, string> = {
   error: 'text-destructive',
 }
 
-interface ProgressInfoProps {
+type ProgressInfoProps = {
   state: ProgressState
   title?: string
 }
