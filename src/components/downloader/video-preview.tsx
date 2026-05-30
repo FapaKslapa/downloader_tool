@@ -1,4 +1,4 @@
-import type { VideoInfo } from '@/types/downloader'
+import type { VideoInfo } from '@/schemas/downloader'
 import { VideoMeta } from './video-meta'
 import { VideoThumbnail } from './video-thumbnail'
 

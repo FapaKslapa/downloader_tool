@@ -1,5 +1,5 @@
 'use client'
-import type { AudioFormat, AudioQuality, DownloadOptions } from '@/types/downloader'
+import type { AudioFormat, AudioQuality, DownloadOptions } from '@/schemas/downloader'
 import { AudioFormatGrid } from './audio-format-grid'
 import { AudioQualitySelector } from './audio-quality-selector'
 

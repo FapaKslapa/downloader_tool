@@ -1,6 +1,6 @@
 'use client'
 import { AUDIO_QUALITIES } from '@/lib/download-options'
-import type { AudioQuality } from '@/types/downloader'
+import type { AudioQuality } from '@/schemas/downloader'
 import { QualityChip } from './quality-chip'
 
 interface AudioQualitySelectorProps {

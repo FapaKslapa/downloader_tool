@@ -1,7 +1,7 @@
 'use client'
 import { invoke } from '@tauri-apps/api/core'
 import { useState } from 'react'
-import type { VideoInfo } from '@/types/downloader'
+import type { VideoInfo } from '@/schemas/downloader'
 
 export function useVideoInfo() {
   const [videoInfo, setVideoInfo] = useState<VideoInfo | null>(null)

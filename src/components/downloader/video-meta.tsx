@@ -1,6 +1,6 @@
 import { ExternalLink, Eye, ThumbsUp } from 'lucide-react'
 import { formatCount, formatUploadDate } from '@/lib/time'
-import type { VideoInfo } from '@/types/downloader'
+import type { VideoInfo } from '@/schemas/downloader'
 
 type Props = Pick<
   VideoInfo,

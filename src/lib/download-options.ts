@@ -1,4 +1,4 @@
-import type { DownloadOptions } from '@/types/downloader'
+import type { DownloadOptions } from '@/schemas/downloader'
 
 export const VIDEO_QUALITIES = [
   { label: 'Migliore', value: 'best' },

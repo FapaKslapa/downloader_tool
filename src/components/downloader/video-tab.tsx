@@ -1,5 +1,5 @@
 'use client'
-import type { DownloadOptions, VideoFormat, VideoQuality } from '@/types/downloader'
+import type { DownloadOptions, VideoFormat, VideoQuality } from '@/schemas/downloader'
 import { ContainerSelector } from './container-selector'
 import { QualitySelector } from './quality-selector'
 

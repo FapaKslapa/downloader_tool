@@ -1,6 +1,6 @@
 'use client'
 import { VIDEO_QUALITIES } from '@/lib/download-options'
-import type { VideoQuality } from '@/types/downloader'
+import type { VideoQuality } from '@/schemas/downloader'
 import { QualityChip } from './quality-chip'
 
 interface QualitySelectorProps {

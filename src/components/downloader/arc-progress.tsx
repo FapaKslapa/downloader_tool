@@ -1,5 +1,5 @@
 import { AlertCircle, CheckCircle2, Film } from 'lucide-react'
-import type { DownloadPhase } from '@/types/downloader'
+import type { DownloadPhase } from '@/schemas/downloader'
 
 interface ArcProgressProps {
   percent: number

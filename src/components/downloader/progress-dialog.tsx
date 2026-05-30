@@ -2,7 +2,7 @@
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
-import type { ProgressState } from '@/types/downloader'
+import type { ProgressState } from '@/schemas/downloader'
 import { ArcProgress } from './arc-progress'
 import { ProgressInfo } from './progress-info'
 

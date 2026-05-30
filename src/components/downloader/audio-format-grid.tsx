@@ -1,7 +1,7 @@
 'use client'
 import { AUDIO_FORMATS } from '@/lib/download-options'
 import { cn } from '@/lib/utils'
-import type { AudioFormat } from '@/types/downloader'
+import type { AudioFormat } from '@/schemas/downloader'
 
 interface AudioFormatGridProps {
   value: AudioFormat
