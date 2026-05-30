@@ -98,7 +98,7 @@ async fn get_video_info(app: AppHandle, url: String) -> Result<VideoInfo, String
 
     let command = match app.shell().sidecar("yt-dlp") {
         Ok(cmd) => cmd.args(args),
-        Err(_) => tauri_plugin_shell::process::Command::new("yt-dlp").args(args),
+        Err(_) => app.shell().command("yt-dlp").args(args),
     };
 
     let output = command.output()
@@ -219,7 +219,7 @@ async fn download_video(
 
     let mut command = match app.shell().sidecar("yt-dlp") {
         Ok(cmd) => cmd.args(args),
-        Err(_) => tauri_plugin_shell::process::Command::new("yt-dlp").args(args),
+        Err(_) => app.shell().command("yt-dlp").args(args),
     };
 
     let (mut rx, _child) = command.spawn()
