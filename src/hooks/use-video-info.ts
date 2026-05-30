@@ -1,38 +1,36 @@
 'use client'
-import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
-import { trpc } from '@/lib/trpc/react'
+import { invoke } from '@tauri-apps/api/core'
+import { useState } from 'react'
 import type { VideoInfo } from '@/types/downloader'
 
 export function useVideoInfo() {
-  const qc = useQueryClient()
-  const [queryUrl, setQueryUrl] = useState('')
   const [videoInfo, setVideoInfo] = useState<VideoInfo | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const query = trpc.youtube.getInfo.useQuery(
-    { url: queryUrl },
-    { enabled: !!queryUrl, retry: false },
-  )
-
-  useEffect(() => {
-    if (query.data) setVideoInfo(query.data as VideoInfo)
-  }, [query.data])
-
-  const search = (url: string) => {
+  const search = async (url: string) => {
+    setIsLoading(true)
+    setError(null)
     setVideoInfo(null)
-    setQueryUrl(url)
+    try {
+      const info = await invoke<VideoInfo>('get_video_info', { url })
+      setVideoInfo(info)
+    } catch (err) {
+      setError(typeof err === 'string' ? err : String(err))
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const reset = () => {
-    setQueryUrl('')
     setVideoInfo(null)
-    qc.removeQueries({ queryKey: [['youtube', 'getInfo']] })
+    setError(null)
   }
 
   return {
     videoInfo,
-    isLoading: query.isFetching,
-    error: query.error?.message ?? null,
+    isLoading,
+    error,
     search,
     reset,
   }

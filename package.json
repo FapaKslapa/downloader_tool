@@ -13,6 +13,7 @@
   "dependencies": {
     "@base-ui/react": "^1.5.0",
     "@tanstack/react-query": "^5.100.14",
+    "@tauri-apps/api": "^2.11.0",
     "@trpc/client": "^11.17.0",
     "@trpc/react-query": "^11.17.0",
     "@trpc/server": "^11.17.0",
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
     "@tailwindcss/postcss": "^4",
+    "@tauri-apps/cli": "^2.11.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
