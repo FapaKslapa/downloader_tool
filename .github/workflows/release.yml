@@ -58,11 +58,10 @@ jobs:
             cp yt-dlp-mac src-tauri/binaries/yt-dlp-x86_64-apple-darwin
             cp yt-dlp-mac src-tauri/binaries/yt-dlp-aarch64-apple-darwin
             rm yt-dlp-mac
-            curl -L -o ffmpeg-mac-intel.zip https://evermeet.cx/ffmpeg/getrelease/zip
-            unzip ffmpeg-mac-intel.zip -d ffmpeg-intel
-            cp ffmpeg-intel/ffmpeg src-tauri/binaries/ffmpeg-x86_64-apple-darwin
-            cp ffmpeg-intel/ffmpeg src-tauri/binaries/ffmpeg-aarch64-apple-darwin
-            rm -rf ffmpeg-mac-intel.zip ffmpeg-intel
+            curl -L -o src-tauri/binaries/ffmpeg-x86_64-apple-darwin https://github.com/eugeneware/ffmpeg-static/releases/download/b6.1.1/ffmpeg-darwin-x64
+            curl -L -o src-tauri/binaries/ffmpeg-aarch64-apple-darwin https://github.com/eugeneware/ffmpeg-static/releases/download/b6.1.1/ffmpeg-darwin-arm64
+            chmod +x src-tauri/binaries/ffmpeg-x86_64-apple-darwin
+            chmod +x src-tauri/binaries/ffmpeg-aarch64-apple-darwin
           fi
 
       - name: Install Frontend Dependencies

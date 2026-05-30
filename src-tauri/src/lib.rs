@@ -4,6 +4,10 @@ use tauri_plugin_shell::process::CommandEvent;
 use serde::{Serialize, Deserialize};
 use std::sync::OnceLock;
 use regex::Regex;
+use std::path::PathBuf;
+
+#[cfg(unix)]
+use std::os::unix::fs::symlink;
 
 static PROGRESS_RE: OnceLock<Regex> = OnceLock::new();
 
@@ -202,6 +206,51 @@ fn get_sidecar_path(app: &AppHandle, name: &str) -> Option<String> {
     }
 }
 
+fn prepare_ffmpeg(app: &AppHandle) -> Result<PathBuf, String> {
+    let ffmpeg_sidecar = get_sidecar_path(app, "ffmpeg")
+        .ok_or_else(|| "FFmpeg sidecar non trovato nel pacchetto dell'applicazione.".to_string())?;
+
+    let local_data = app.path().app_local_data_dir()
+        .map_err(|e| format!("Impossibile ottenere la cartella dati dell'applicazione: {}", e))?;
+    
+    let bin_dir = local_data.join("binaries");
+    std::fs::create_dir_all(&bin_dir)
+        .map_err(|e| format!("Impossibile creare la cartella binaries: {}", e))?;
+
+    let ext = if cfg!(target_os = "windows") { ".exe" } else { "" };
+    let target_ffmpeg = bin_dir.join(format!("ffmpeg{}", ext));
+
+    #[cfg(unix)]
+    {
+        if target_ffmpeg.exists() || target_ffmpeg.is_symlink() {
+            let _ = std::fs::remove_file(&target_ffmpeg);
+        }
+        symlink(&ffmpeg_sidecar, &target_ffmpeg)
+            .map_err(|e| format!("Impossibile creare il symlink per ffmpeg: {}", e))?;
+    }
+
+    #[cfg(not(unix))]
+    {
+        let copy_needed = if target_ffmpeg.exists() {
+            let sidecar_meta = std::fs::metadata(&ffmpeg_sidecar).ok();
+            let target_meta = std::fs::metadata(&target_ffmpeg).ok();
+            match (sidecar_meta, target_meta) {
+                (Some(sm), Some(tm)) => sm.len() != tm.len(),
+                _ => true,
+            }
+        } else {
+            true
+        };
+
+        if copy_needed {
+            std::fs::copy(&ffmpeg_sidecar, &target_ffmpeg)
+                .map_err(|e| format!("Impossibile copiare ffmpeg: {}", e))?;
+        }
+    }
+
+    Ok(bin_dir)
+}
+
 #[tauri::command]
 async fn download_video(
     app: AppHandle,
@@ -231,12 +280,15 @@ async fn download_video(
         "--progress".to_string(),
     ];
 
-    if let Some(ffmpeg_path) = get_sidecar_path(&app, "ffmpeg") {
-        if let Some(parent) = std::path::Path::new(&ffmpeg_path).parent() {
-            if let Some(parent_str) = parent.to_str() {
+    match prepare_ffmpeg(&app) {
+        Ok(bin_dir) => {
+            if let Some(bin_dir_str) = bin_dir.to_str() {
                 args.push("--ffmpeg-location".to_string());
-                args.push(parent_str.to_string());
+                args.push(bin_dir_str.to_string());
             }
+        }
+        Err(e) => {
+            eprintln!("Errore nella preparazione di FFmpeg: {}", e);
         }
     }
 
