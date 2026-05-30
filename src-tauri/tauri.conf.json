@@ -22,18 +22,6 @@
       "csp": null
     }
   },
-  "plugins": {
-    "shell": {
-      "sidecar": [
-        {
-          "name": "binaries/yt-dlp"
-        },
-        {
-          "name": "binaries/ffmpeg"
-        }
-      ]
-    }
-  },
   "bundle": {
     "active": true,
     "targets": "all",
