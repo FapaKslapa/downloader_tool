@@ -40,3 +40,13 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 !.env.example
+
+# IDEs and local workspace configs
+.idea/
+.vscode/
+.antigravitycli/
+.claude/
+
+# Rust/Tauri build target
+/src-tauri/target/
+/src-tauri/binaries/

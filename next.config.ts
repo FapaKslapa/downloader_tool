@@ -1,8 +1,9 @@
 import type { NextConfig } from 'next'
 
 const config: NextConfig = {
-  output: 'standalone',
+  output: 'export',
   images: {
+    unoptimized: true,
     remotePatterns: [
       { protocol: 'https', hostname: '*.ytimg.com' },
       { protocol: 'https', hostname: 'yt3.ggpht.com' },

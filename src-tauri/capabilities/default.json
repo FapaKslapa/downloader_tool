@@ -1,0 +1,6 @@
+{
+  "identifier": "default",
+  "description": "Default capability for the TubeGrab application",
+  "windows": ["main"],
+  "permissions": ["core:default", "shell:allow-yt-dlp", "shell:allow-ffmpeg"]
+}
