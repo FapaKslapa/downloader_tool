@@ -40,13 +40,13 @@ pub struct VideoInfo {
     hasSubtitles: bool,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct YtRawThumbnail {
     url: String,
     width: Option<u32>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct YtRawFormat {
     height: Option<u32>,
     ext: Option<String>,
@@ -54,7 +54,7 @@ struct YtRawFormat {
     acodec: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct YtRaw {
     id: String,
     title: String,
@@ -101,7 +101,7 @@ async fn get_video_info(app: AppHandle, url: String) -> Result<VideoInfo, String
         Err(_) => app.shell().command("yt-dlp").args(args),
     };
 
-    let output = command.output()
+    let output = command.output().await
         .map_err(|e| format!("Impossibile eseguire yt-dlp: {}", e))?;
 
     if !output.status.success() {
@@ -217,7 +217,7 @@ async fn download_video(
         args.push("--add-metadata".to_string());
     }
 
-    let mut command = match app.shell().sidecar("yt-dlp") {
+    let command = match app.shell().sidecar("yt-dlp") {
         Ok(cmd) => cmd.args(args),
         Err(_) => app.shell().command("yt-dlp").args(args),
     };
