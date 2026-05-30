@@ -75,7 +75,7 @@ jobs:
           tagName: ${{ github.ref_name }}
           releaseName: 'TubeGrab v__VERSION__'
           releaseBody: 'Nuovo rilascio automatico per TubeGrab'
-          releaseDraft: true
+          releaseDraft: false
           prerelease: false
 
       - name: Collect Packages
