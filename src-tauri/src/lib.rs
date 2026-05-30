@@ -157,6 +157,51 @@ async fn get_video_info(app: AppHandle, url: String) -> Result<VideoInfo, String
     })
 }
 
+fn get_sidecar_path(app: &AppHandle, name: &str) -> Option<String> {
+    let app_dir = std::env::current_exe()
+        .ok()
+        .and_then(|p| p.parent().map(|p| p.to_path_buf()))?;
+
+    let arch = if cfg!(target_arch = "x86_64") {
+        "x86_64"
+    } else if cfg!(target_arch = "aarch64") {
+        "aarch64"
+    } else {
+        return None;
+    };
+
+    let os = if cfg!(target_os = "windows") {
+        "pc-windows-msvc"
+    } else if cfg!(target_os = "macos") {
+        "apple-darwin"
+    } else if cfg!(target_os = "linux") {
+        "unknown-linux-gnu"
+    } else {
+        return None;
+    };
+
+    let ext = if cfg!(target_os = "windows") { ".exe" } else { "" };
+    let sidecar_filename = format!("{}-{}-{}{}", name, arch, os, ext);
+    let path = app_dir.join(&sidecar_filename);
+
+    if path.exists() {
+        path.to_str().map(|s| s.to_string())
+    } else {
+        let simple_path = app_dir.join(format!("{}{}", name, ext));
+        if simple_path.exists() {
+            simple_path.to_str().map(|s| s.to_string())
+        } else {
+            let res_path = app.path().resolve(format!("binaries/{}", sidecar_filename), tauri::path::BaseDirectory::Resource).ok();
+            if let Some(ref p) = res_path {
+                if p.exists() {
+                    return p.to_str().map(|s| s.to_string());
+                }
+            }
+            None
+        }
+    }
+}
+
 #[tauri::command]
 async fn download_video(
     app: AppHandle,
@@ -185,6 +230,11 @@ async fn download_video(
         "--newline".to_string(),
         "--progress".to_string(),
     ];
+
+    if let Some(ffmpeg_path) = get_sidecar_path(&app, "ffmpeg") {
+        args.push("--ffmpeg-location".to_string());
+        args.push(ffmpeg_path);
+    }
 
     if download_type == "audio" {
         args.push("-x".to_string());

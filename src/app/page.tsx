@@ -9,9 +9,6 @@ export default function Home() {
       <main className="relative z-10 flex flex-col items-center gap-10 px-4 py-16 sm:py-24">
         <SiteHeader />
         <Downloader />
-        <p className="text-xs text-muted-foreground/40">
-          Powered by yt-dlp &amp; ffmpeg · Solo per uso personale
-        </p>
       </main>
     </div>
   )

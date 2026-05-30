@@ -1,4 +1,4 @@
-import { AlertCircle, CheckCircle2, Zap } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Film } from 'lucide-react'
 import type { DownloadPhase } from '@/types/downloader'
 
 interface ArcProgressProps {
@@ -28,10 +28,10 @@ export function ArcProgress({ percent, phase }: ArcProgressProps) {
             strokeWidth="8"
             strokeLinecap="round"
             strokeDasharray={circ}
-            strokeDashoffset={isMerging ? 0 : offset}
+            strokeDashoffset={isMerging ? circ * 0.8 : offset}
             style={
               isMerging
-                ? { animation: 'spin 1.2s linear infinite' }
+                ? { animation: 'spin 1.4s linear infinite', transformOrigin: 'center' }
                 : { transition: 'stroke-dashoffset 0.3s ease' }
             }
           />
@@ -40,11 +40,11 @@ export function ArcProgress({ percent, phase }: ArcProgressProps) {
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         {isComplete ? (
           <CheckCircle2 className="h-12 w-12 text-green-400" />
-        ) : isError ? (
+         ) : isError ? (
           <AlertCircle className="h-12 w-12 text-destructive" />
-        ) : isMerging ? (
-          <Zap className="h-8 w-8 text-yt-red" />
-        ) : (
+         ) : isMerging ? (
+          <Film className="h-8 w-8 text-primary animate-pulse" />
+         ) : (
           <>
             <span className="font-display text-2xl font-bold tabular-nums">
               {Math.round(percent)}
