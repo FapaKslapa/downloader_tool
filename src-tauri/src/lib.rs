@@ -28,20 +28,21 @@ fn parse_progress(line: &str) -> Option<(f64, String, String, String)> {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct VideoInfo {
     id: String,
     title: String,
     thumbnail: String,
     duration: u64,
     channel: String,
-    channelUrl: Option<String>,
-    viewCount: Option<u64>,
-    likeCount: Option<u64>,
-    uploadDate: Option<String>,
+    channel_url: Option<String>,
+    view_count: Option<u64>,
+    like_count: Option<u64>,
+    upload_date: Option<String>,
     url: String,
-    isLive: bool,
-    availableHeights: Vec<u32>,
-    hasSubtitles: bool,
+    is_live: bool,
+    available_heights: Vec<u32>,
+    has_subtitles: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -150,14 +151,14 @@ async fn get_video_info(app: AppHandle, url: String) -> Result<VideoInfo, String
         thumbnail: best_thumbnail,
         duration: raw.duration.unwrap_or(0.0) as u64,
         channel: raw.channel.or(raw.uploader).unwrap_or_else(|| "Unknown".to_string()),
-        channelUrl: raw.channel_url,
-        viewCount: raw.view_count,
-        likeCount: raw.like_count,
-        uploadDate: raw.upload_date,
+        channel_url: raw.channel_url,
+        view_count: raw.view_count,
+        like_count: raw.like_count,
+        upload_date: raw.upload_date,
         url: raw.webpage_url,
-        isLive: raw.is_live.unwrap_or(false) || raw.live_status.as_deref() == Some("is_live"),
-        availableHeights: heights,
-        hasSubtitles: has_subs,
+        is_live: raw.is_live.unwrap_or(false) || raw.live_status.as_deref() == Some("is_live"),
+        available_heights: heights,
+        has_subtitles: has_subs,
     })
 }
 

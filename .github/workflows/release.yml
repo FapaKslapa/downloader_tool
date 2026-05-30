@@ -77,3 +77,28 @@ jobs:
           releaseBody: 'Nuovo rilascio automatico per TubeGrab'
           releaseDraft: true
           prerelease: false
+
+      - name: Collect Packages
+        shell: bash
+        run: |
+          mkdir -p packages
+          # Copy macOS packages
+          if [ -d "src-tauri/target/release/bundle/dmg" ]; then
+            cp src-tauri/target/release/bundle/dmg/*.dmg packages/ 2>/dev/null || true
+          fi
+          if [ -d "src-tauri/target/release/bundle/macos" ]; then
+            cp src-tauri/target/release/bundle/macos/*.app.tar.gz packages/ 2>/dev/null || true
+          fi
+          # Copy Windows packages
+          if [ -d "src-tauri/target/release/bundle/msi" ]; then
+            cp src-tauri/target/release/bundle/msi/*.msi packages/ 2>/dev/null || true
+          fi
+          if [ -d "src-tauri/target/release/bundle/nsis" ]; then
+            cp src-tauri/target/release/bundle/nsis/*.exe packages/ 2>/dev/null || true
+          fi
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages-${{ matrix.platform }}
+          path: packages/
