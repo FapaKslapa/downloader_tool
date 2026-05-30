@@ -1,10 +1,10 @@
-use tauri::{AppHandle, Emitter, Manager};
-use tauri_plugin_shell::ShellExt;
-use tauri_plugin_shell::process::CommandEvent;
-use serde::{Serialize, Deserialize};
-use std::sync::OnceLock;
 use regex::Regex;
+use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
+use std::sync::OnceLock;
+use tauri::{AppHandle, Emitter, Manager};
+use tauri_plugin_shell::process::CommandEvent;
+use tauri_plugin_shell::ShellExt;
 
 #[cfg(unix)]
 use std::os::unix::fs::symlink;
@@ -106,7 +106,9 @@ async fn get_video_info(app: AppHandle, url: String) -> Result<VideoInfo, String
         Err(_) => app.shell().command("yt-dlp").args(args),
     };
 
-    let output = command.output().await
+    let output = command
+        .output()
+        .await
         .map_err(|e| format!("Impossibile eseguire yt-dlp: {}", e))?;
 
     if !output.status.success() {
@@ -120,17 +122,23 @@ async fn get_video_info(app: AppHandle, url: String) -> Result<VideoInfo, String
     let raw: YtRaw = serde_json::from_slice(&output.stdout)
         .map_err(|e| format!("Errore nel parsing delle informazioni: {}", e))?;
 
-    let video_formats: Vec<&YtRawFormat> = raw.formats.iter().filter(|f| {
-        f.vcodec.as_deref().unwrap_or("none") != "none"
-            && f.height.is_some()
-            && !vec![Some("mhtml".to_string()), Some("sb".to_string())].contains(&f.ext)
-    }).collect();
+    let video_formats: Vec<&YtRawFormat> = raw
+        .formats
+        .iter()
+        .filter(|f| {
+            f.vcodec.as_deref().unwrap_or("none") != "none"
+                && f.height.is_some()
+                && !vec![Some("mhtml".to_string()), Some("sb".to_string())].contains(&f.ext)
+        })
+        .collect();
 
     let mut heights: Vec<u32> = video_formats.iter().map(|f| f.height.unwrap()).collect();
     heights.sort_by(|a, b| b.cmp(a));
     heights.dedup();
 
-    let best_thumbnail = raw.thumbnails.as_ref()
+    let best_thumbnail = raw
+        .thumbnails
+        .as_ref()
         .and_then(|t_list| {
             let mut list = t_list.clone();
             list.sort_by_key(|t| t.width.unwrap_or(0));
@@ -138,19 +146,34 @@ async fn get_video_info(app: AppHandle, url: String) -> Result<VideoInfo, String
         })
         .unwrap_or(raw.thumbnail);
 
-    let has_subs = raw.subtitles.as_ref()
-        .map(|s| s.as_object().map(|obj| obj.keys().any(|k| k != "live_chat")).unwrap_or(false))
+    let has_subs = raw
+        .subtitles
+        .as_ref()
+        .map(|s| {
+            s.as_object()
+                .map(|obj| obj.keys().any(|k| k != "live_chat"))
+                .unwrap_or(false)
+        })
         .unwrap_or(false)
-        || raw.automatic_captions.as_ref()
-        .map(|s| s.as_object().map(|obj| obj.keys().any(|k| k != "live_chat")).unwrap_or(false))
-        .unwrap_or(false);
+        || raw
+            .automatic_captions
+            .as_ref()
+            .map(|s| {
+                s.as_object()
+                    .map(|obj| obj.keys().any(|k| k != "live_chat"))
+                    .unwrap_or(false)
+            })
+            .unwrap_or(false);
 
     Ok(VideoInfo {
         id: raw.id,
         title: raw.title,
         thumbnail: best_thumbnail,
         duration: raw.duration.unwrap_or(0.0) as u64,
-        channel: raw.channel.or(raw.uploader).unwrap_or_else(|| "Unknown".to_string()),
+        channel: raw
+            .channel
+            .or(raw.uploader)
+            .unwrap_or_else(|| "Unknown".to_string()),
         channel_url: raw.channel_url,
         view_count: raw.view_count,
         like_count: raw.like_count,
@@ -185,7 +208,11 @@ fn get_sidecar_path(app: &AppHandle, name: &str) -> Option<String> {
         return None;
     };
 
-    let ext = if cfg!(target_os = "windows") { ".exe" } else { "" };
+    let ext = if cfg!(target_os = "windows") {
+        ".exe"
+    } else {
+        ""
+    };
     let sidecar_filename = format!("{}-{}-{}{}", name, arch, os, ext);
     let path = app_dir.join(&sidecar_filename);
 
@@ -196,7 +223,13 @@ fn get_sidecar_path(app: &AppHandle, name: &str) -> Option<String> {
         if simple_path.exists() {
             simple_path.to_str().map(|s| s.to_string())
         } else {
-            let res_path = app.path().resolve(format!("binaries/{}", sidecar_filename), tauri::path::BaseDirectory::Resource).ok();
+            let res_path = app
+                .path()
+                .resolve(
+                    format!("binaries/{}", sidecar_filename),
+                    tauri::path::BaseDirectory::Resource,
+                )
+                .ok();
             if let Some(ref p) = res_path {
                 if p.exists() {
                     return p.to_str().map(|s| s.to_string());
@@ -211,14 +244,22 @@ fn prepare_ffmpeg(app: &AppHandle) -> Result<PathBuf, String> {
     let ffmpeg_sidecar = get_sidecar_path(app, "ffmpeg")
         .ok_or_else(|| "FFmpeg sidecar non trovato nel pacchetto dell'applicazione.".to_string())?;
 
-    let local_data = app.path().app_local_data_dir()
-        .map_err(|e| format!("Impossibile ottenere la cartella dati dell'applicazione: {}", e))?;
-    
+    let local_data = app.path().app_local_data_dir().map_err(|e| {
+        format!(
+            "Impossibile ottenere la cartella dati dell'applicazione: {}",
+            e
+        )
+    })?;
+
     let bin_dir = local_data.join("binaries");
     std::fs::create_dir_all(&bin_dir)
         .map_err(|e| format!("Impossibile creare la cartella binaries: {}", e))?;
 
-    let ext = if cfg!(target_os = "windows") { ".exe" } else { "" };
+    let ext = if cfg!(target_os = "windows") {
+        ".exe"
+    } else {
+        ""
+    };
     let target_ffmpeg = bin_dir.join(format!("ffmpeg{}", ext));
 
     #[cfg(unix)]
@@ -265,11 +306,15 @@ async fn download_video(
     embed_thumbnail: bool,
     embed_metadata: bool,
 ) -> Result<String, String> {
-    let download_dir = app.path().download_dir()
+    let download_dir = app
+        .path()
+        .download_dir()
         .map_err(|e| format!("Impossibile trovare la cartella Download: {}", e))?;
 
     let output_template = download_dir.join("%(title)s.%(ext)s");
-    let output_str = output_template.to_str().ok_or("Errore nel percorso di download")?;
+    let output_str = output_template
+        .to_str()
+        .ok_or("Errore nel percorso di download")?;
 
     let mut args = vec![
         url.clone(),
@@ -329,7 +374,8 @@ async fn download_video(
         Err(_) => app.shell().command("yt-dlp").args(args),
     };
 
-    let (mut rx, _child) = command.spawn()
+    let (mut rx, _child) = command
+        .spawn()
         .map_err(|e| format!("Impossibile avviare yt-dlp: {}", e))?;
 
     let mut phase = 0;
@@ -342,38 +388,47 @@ async fn download_video(
                 for l in line.lines() {
                     if l.contains("[download] Destination:") {
                         phase += 1;
-                        let _ = app.emit("download-progress", DownloadProgressPayload {
-                            r#type: "phase".to_string(),
-                            percent: None,
-                            size: None,
-                            speed: None,
-                            eta: None,
-                            phase,
-                            message: None,
-                            filename: None,
-                        });
+                        let _ = app.emit(
+                            "download-progress",
+                            DownloadProgressPayload {
+                                r#type: "phase".to_string(),
+                                percent: None,
+                                size: None,
+                                speed: None,
+                                eta: None,
+                                phase,
+                                message: None,
+                                filename: None,
+                            },
+                        );
                     } else if l.contains("[Merger]") || l.contains("[ffmpeg]") {
-                        let _ = app.emit("download-progress", DownloadProgressPayload {
-                            r#type: "merging".to_string(),
-                            percent: Some(100.0),
-                            size: None,
-                            speed: None,
-                            eta: None,
-                            phase,
-                            message: None,
-                            filename: None,
-                        });
+                        let _ = app.emit(
+                            "download-progress",
+                            DownloadProgressPayload {
+                                r#type: "merging".to_string(),
+                                percent: Some(100.0),
+                                size: None,
+                                speed: None,
+                                eta: None,
+                                phase,
+                                message: None,
+                                filename: None,
+                            },
+                        );
                     } else if let Some((percent, size, speed, eta)) = parse_progress(l) {
-                        let _ = app.emit("download-progress", DownloadProgressPayload {
-                            r#type: "progress".to_string(),
-                            percent: Some(percent),
-                            size: Some(size),
-                            speed: Some(speed),
-                            eta: Some(eta),
-                            phase,
-                            message: None,
-                            filename: None,
-                        });
+                        let _ = app.emit(
+                            "download-progress",
+                            DownloadProgressPayload {
+                                r#type: "progress".to_string(),
+                                percent: Some(percent),
+                                size: Some(size),
+                                speed: Some(speed),
+                                eta: Some(eta),
+                                phase,
+                                message: None,
+                                filename: None,
+                            },
+                        );
                     } else if l.contains("ERROR:") {
                         err_buf.push_str(l);
                         err_buf.push('\n');
@@ -391,32 +446,40 @@ async fn download_video(
             }
             CommandEvent::Terminated(payload) => {
                 if payload.code == Some(0) {
-                    let _ = app.emit("download-progress", DownloadProgressPayload {
-                        r#type: "complete".to_string(),
-                        percent: Some(100.0),
-                        size: None,
-                        speed: None,
-                        eta: None,
-                        phase,
-                        message: None,
-                        filename: Some("Video scaricato con successo nella cartella Download".to_string()),
-                    });
+                    let _ = app.emit(
+                        "download-progress",
+                        DownloadProgressPayload {
+                            r#type: "complete".to_string(),
+                            percent: Some(100.0),
+                            size: None,
+                            speed: None,
+                            eta: None,
+                            phase,
+                            message: None,
+                            filename: Some(
+                                "Video scaricato con successo nella cartella Download".to_string(),
+                            ),
+                        },
+                    );
                 } else {
                     let err_msg = if err_buf.is_empty() {
                         format!("Download fallito con codice {:?}", payload.code)
                     } else {
                         err_buf.clone()
                     };
-                    let _ = app.emit("download-progress", DownloadProgressPayload {
-                        r#type: "error".to_string(),
-                        percent: None,
-                        size: None,
-                        speed: None,
-                        eta: None,
-                        phase,
-                        message: Some(err_msg),
-                        filename: None,
-                    });
+                    let _ = app.emit(
+                        "download-progress",
+                        DownloadProgressPayload {
+                            r#type: "error".to_string(),
+                            percent: None,
+                            size: None,
+                            speed: None,
+                            eta: None,
+                            phase,
+                            message: Some(err_msg),
+                            filename: None,
+                        },
+                    );
                 }
             }
             _ => {}

@@ -1,74 +1,84 @@
 # TubeGrab
 
-YouTube downloader with real-time progress, built with Next.js 16, shadcn/ui, tRPC, and yt-dlp.
+TubeGrab is a modern client-side desktop application for downloading videos and audio from YouTube. It is built using Tauri v2, Next.js, and shadcn/ui, and bundles its own architecture-specific sidecar dependencies (yt-dlp and FFmpeg) to run completely self-contained.
+
+## Features
+
+- High-speed YouTube downloads for both video and audio.
+- Native, platform-appropriate sidecars for yt-dlp and FFmpeg (no manual installation required).
+- Real-time download progress tracker (speed, size, ETA, current phase).
+- Support for selecting specific video resolutions (up to 4K) and audio formats (MP3, M4A, WAV).
+- Completely local and private execution, downloading files directly to your system's Downloads folder.
+- Dynamic, responsive user interface styled with shadcn/ui and custom CSS.
+
+## Prerequisites for Development
+
+Before setting up local development, make sure you have the following installed:
+
+- Node.js (version 22 or higher)
+- pnpm (version 10 or higher)
+- Rust (stable toolchain)
+- Platform build tools:
+  - macOS: Xcode Command Line Tools (`xcode-select --install`)
+  - Windows: C++ build tools from Visual Studio
 
 ## Local Development
 
-```bash
-# prerequisites: yt-dlp and ffmpeg
-brew install yt-dlp ffmpeg
+Follow these steps to run the application locally in development mode:
 
-pnpm install
-pnpm dev
-```
+1. Clone the repository and navigate to the project directory:
+   ```bash
+   cd downloader_tool
+   ```
 
-Open [http://localhost:3000](http://localhost:3000).
+2. Install the frontend dependencies:
+   ```bash
+   pnpm install
+   ```
 
-## Deploy (Zimablade via Tailscale + Docker)
+3. Download the sidecar binaries for your platform:
+   - For macOS: Ensure `yt-dlp` and `ffmpeg` binaries matching your architecture (aarch64/arm64 or x86_64) are placed in `src-tauri/binaries/` named as `yt-dlp-[arch]-apple-darwin` and `ffmpeg-[arch]-apple-darwin`.
+   - For Windows: Place `yt-dlp-x86_64-pc-windows-msvc.exe` and `ffmpeg-x86_64-pc-windows-msvc.exe` in `src-tauri/binaries/`.
 
-### GitHub Secrets required
+4. Start the application in development mode:
+   ```bash
+   pnpm tauri dev
+   ```
 
-| Secret | Description |
-|--------|-------------|
-| `GHCR_TOKEN` | GitHub PAT with `read:packages` (for server to pull image) |
-| `TS_OAUTH_CLIENT_ID` | Tailscale OAuth client ID |
-| `TS_OAUTH_CLIENT_SECRET` | Tailscale OAuth client secret |
-| `DEPLOY_HOST` | Tailscale hostname or IP of the server |
-| `DEPLOY_USER` | SSH username on the server |
-| `DEPLOY_SSH_KEY` | Private SSH key (matching `authorized_keys` on server) |
+## Production Build
 
-Create a GitHub **environment** named `production` (Settings → Environments).
-
-### Tailscale OAuth
-
-In [Tailscale Admin → OAuth clients](https://login.tailscale.com/admin/settings/oauth), create a client with `devices:read` scope and add `tag:ci` to ACL `tagOwners`.
-
-### Server setup (one-time)
+To compile a production-ready package locally:
 
 ```bash
-# install Docker
-curl -fsSL https://get.docker.com | sh
-
-# create app dir
-mkdir -p /opt/tubegrab && cd /opt/tubegrab
-
-# create docker-compose.yml referencing the ghcr image
-# (see docker-compose.yml in repo, set GITHUB_REPOSITORY_OWNER and TAG vars)
-echo 'GITHUB_REPOSITORY_OWNER=your-github-user' > .env
-echo 'TAG=main' >> .env
-
-# login to ghcr and pull
-echo YOUR_GHCR_TOKEN | docker login ghcr.io -u your-github-user --password-stdin
-docker compose pull && docker compose up -d
+pnpm tauri build
 ```
 
-### Release workflow
+This will output the installers in `src-tauri/target/release/bundle/`.
 
-```bash
-# develop on dev, then:
-git checkout main && git merge dev
-git push origin main          # triggers build + deploy
+## Automated Releases via GitHub Actions
 
-# tagged release
-git tag -a v1.0.0 -m "v1.0.0"
-git push origin v1.0.0
-```
+Releases are fully automated. Every time you push a tag starting with `v` (e.g. `v0.2.11`), GitHub Actions triggers a build:
+
+1. It checks out the code, setups Node.js and Rust.
+2. It fetches the latest appropriate static binaries for both macOS and Windows.
+3. It compiles the applications, renaming and bundling the sidecars inside the final packages.
+4. It creates a GitHub Release and attaches the compiled installers (`.dmg` for macOS, `.msi` and `.exe` for Windows) directly under the Releases section of the repository.
+
+To release a new version:
+1. Update the version inside `package.json`, `src-tauri/tauri.conf.json`, and `src-tauri/Cargo.toml`.
+2. Commit and push the changes to the `main` branch.
+3. Tag and push the new version:
+   ```bash
+   git tag v0.2.11
+   git push origin v0.2.11
+   ```
 
 ## Scripts
 
-```bash
-pnpm dev          # start dev server
-pnpm build        # production build
-pnpm check        # Biome lint + format check
-pnpm check:fix    # auto-fix
-```
+The following scripts are defined in the project:
+
+- `pnpm dev`: Start Next.js development server.
+- `pnpm build`: Generate static production export for the frontend.
+- `pnpm check`: Run Biome syntax check and linter.
+- `pnpm check:fix`: Automatically fix lints and format using Biome.
+- `pnpm format`: Format all frontend code.

@@ -1,6 +1,6 @@
 {
   "productName": "TubeGrab",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "identifier": "com.tubegrab.app",
   "build": {
     "beforeDevCommand": "pnpm dev",

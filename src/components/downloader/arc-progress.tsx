@@ -40,11 +40,11 @@ export function ArcProgress({ percent, phase }: ArcProgressProps) {
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         {isComplete ? (
           <CheckCircle2 className="h-12 w-12 text-green-400" />
-         ) : isError ? (
+        ) : isError ? (
           <AlertCircle className="h-12 w-12 text-destructive" />
-         ) : isMerging ? (
+        ) : isMerging ? (
           <Film className="h-8 w-8 text-primary animate-pulse" />
-         ) : (
+        ) : (
           <>
             <span className="font-display text-2xl font-bold tabular-nums">
               {Math.round(percent)}
