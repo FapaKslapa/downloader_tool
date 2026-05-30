@@ -232,8 +232,12 @@ async fn download_video(
     ];
 
     if let Some(ffmpeg_path) = get_sidecar_path(&app, "ffmpeg") {
-        args.push("--ffmpeg-location".to_string());
-        args.push(ffmpeg_path);
+        if let Some(parent) = std::path::Path::new(&ffmpeg_path).parent() {
+            if let Some(parent_str) = parent.to_str() {
+                args.push("--ffmpeg-location".to_string());
+                args.push(parent_str.to_string());
+            }
+        }
     }
 
     if download_type == "audio" {
